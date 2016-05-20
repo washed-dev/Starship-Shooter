@@ -79,6 +79,8 @@ public void transEnemy(int dx) {
 		break;
 		case 3: color=new Color(0xFFBF00);
 		break;
+		default: color=new Color(0xFFBF00);
+		break;
 	}
 		g.setColor(color);
 		g.fillPolygon(transEnemy);
@@ -86,11 +88,11 @@ public void transEnemy(int dx) {
 		
 	}
 	
-	public int getX() {
+	public int bulletX() {
 		return bulletX;
 	}
 	
-	public int getY() {
+	public int bulletY() {
 		return bulletY;
 	}
 	

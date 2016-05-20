@@ -42,6 +42,8 @@ public class Shooter implements ActionListener, KeyListener {
 	public int move;
 	public int enemyCount;
 	public static int playerLives=3;
+	public static int health=3;
+	public static int waveNum=1;
 	
 	
 	public int bulletsInTick=0;
@@ -94,29 +96,49 @@ public class Shooter implements ActionListener, KeyListener {
 	
 	public void startGame() {
 		starDisp=0;
+		stars.removeAll(stars);
+		enemies.removeAll(enemies);
+		bullets.removeAll(bullets);
+		eBullets.removeAll(eBullets);
 		for(int i =0; i<75;i++) {
 			stars.add(new Point(Picker.nextInt(575),Picker.nextInt(500)));
 		}
-		 playerLives=3;
+		 health=3;
 		 dx=0;
-		 score=0;
-		 
-		
-		
-		
 		player = new Player(new Point(285,460),ShapeList.playerPoly);
 			for(int i =0 ;i<=8;i+=2) {
-			enemies.add(new Enemy(60*i,10,1,1/*i==0||i==4||i==8?1:-1*/));
+			enemies.add(new Enemy(60*i,10,1,i==0||i==4||i==8?1:-1));
 			
 			}
 			for(int i =0 ;i<=9;i+=2) {
-				enemies.add(new Enemy(60*i,70,3,i==0||i==4||i==8?-1:1));
+				enemies.add(new Enemy(60*i,70,10,i==0||i==4||i==8?-1:1));
 			}
 			enemyCount=enemies.size();
+			timer.start();
+	}
+	
+	public void newWave() {
+		stars.removeAll(stars);
+		enemies.removeAll(enemies);
+		bullets.removeAll(bullets);
+		eBullets.removeAll(eBullets);
+		starDisp=0;
+		dx=0;
+		
+		for(int i =0; i<75;i++) {
+			stars.add(new Point(Picker.nextInt(575),Picker.nextInt(500)));
+		}
+		 health=3;
+		 
+		player = new Player(new Point(285,460),ShapeList.playerPoly);
+			for(int i =0 ;i<=8;i+=2) {
+			enemies.add(new Enemy(60*i,10,1,i==0||i==4||i==8?1:-1));
 			
-			
-			
-			
+			}
+			for(int i =0 ;i<=8;i+=2) {
+				enemies.add(new Enemy(60*i,70,3,(i==0||i==4||i==8)?-1:1));
+			}
+			enemyCount=enemies.size();
 			timer.start();
 	}
 	
@@ -139,13 +161,28 @@ public class Shooter implements ActionListener, KeyListener {
 		shootEnemy=enemies.get(Picker.nextInt(enemies.size()));
 		}
 		
-		if(enemyCount<=0||playerLives<=0) {
+		if(enemyCount<=0||health<=0||playerLives<=0) {
+			  
+			
+			if(enemyCount<=0){
+			waveNum++;
+			newWave();
+			}
 			direction=0;
-			stars.removeAll(stars);
-			enemies.removeAll(enemies);
-			bullets.removeAll(bullets);
-			eBullets.removeAll(eBullets);
-			startGame();
+			
+			
+			if(playerLives<=0){
+				startGame();
+				waveNum=1;
+				playerLives=3;
+				score=0;
+				}
+			
+			if(health<=0){
+			playerLives--;
+			newWave();}
+			
+			
 			
 		}
 		
@@ -186,7 +223,7 @@ public class Shooter implements ActionListener, KeyListener {
 							e.direction=1;
 							t.direction=-1;
 						}*/
-						if(e.getY()==t.getY()&&(e.getRightX()-t.getLeftX()<=5&&e.getRightX()-t.getLeftX()>=-5)) {
+						if(e.bulletY()==t.bulletY()&&(e.getRightX()-t.getLeftX()<=5&&e.getRightX()-t.getLeftX()>=-5)) {
 							e.direction=-1;
 							t.direction=1;
 						}
@@ -228,7 +265,8 @@ public class Shooter implements ActionListener, KeyListener {
 			}
 			if(player.transPlayer.intersects(new Rectangle(b.getX(),b.getY(),10,20))) {
 				bIterator.remove();
-				playerLives--;
+				health--;
+				
 			}
 		}
 		
@@ -248,10 +286,10 @@ public class Shooter implements ActionListener, KeyListener {
 		if(ticks%20==0) {for(Iterator<Enemy> iterator=enemies.iterator(); iterator.hasNext();) {
 			Enemy e =iterator.next();
 			e.transEnemy(1*e.direction*60/(3*(e.health+2)));
-			if(e.getX()+20>560) {
+			if(e.bulletX()+20>560) {
 				e.switchDirection();
 			}
-			if(e.getX()<10) {
+			if(e.bulletX()<10) {
 				e.switchDirection();}
 			}
 		}
@@ -261,10 +299,10 @@ public class Shooter implements ActionListener, KeyListener {
 		if(ticks%350==0) {
 			for(Enemy e: enemies){
 			if(Picker.nextInt(3)==0)
-			eBullets.add(new Bullet(e.getX()+2,e.bulletY));
+			eBullets.add(new Bullet(e.bulletX()+2,e.bulletY));
 			
-			if(e.getX()+20>=560||e.getX()<=10) {
-				eBullets.add(new Bullet(e.getX()+2,e.bulletY));
+			if(e.bulletX()+20>=560||e.bulletX()<=10) {
+				eBullets.add(new Bullet(e.bulletX()+2,e.bulletY));
 			}
 		}
 		}

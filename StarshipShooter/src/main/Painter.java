@@ -29,6 +29,8 @@ public class Painter extends JPanel {
 		String Lives = String.format("Lives: %d", shooter.playerLives);
 		String Enemies = String.format("Enemies: %d", shooter.enemyCount);
 		String Score = String.format("Score: %d", shooter.score);
+		String Health =  String.format("Health: %d", shooter.health);
+		String WaveNum = String.format("Wave: %d", shooter.waveNum);
 		g.setColor(mycolor);
 		g.fillRect(0, 0, 570, 700);
 		
@@ -54,6 +56,10 @@ public class Painter extends JPanel {
 		
 		for(Enemy e: shooter.enemies) {
 			e.drawEnemy(g);
+			g.setColor(Color.green);
+			g.fillRect(e.bulletX()+5-20*e.health/e.initHealth, e.bulletY+5, 40/e.initHealth*(e.health), 5);
+			g.setColor(Color.white);
+			g.drawRect(e.bulletX()-15, e.bulletY+5, 40, 5);
 		}
 		for(Bullet b:shooter.bullets) {
 		
@@ -71,6 +77,7 @@ public class Painter extends JPanel {
 		g.drawString(Lives, 0, 511);
 		g.drawString(Enemies, 0, 531);
 		g.drawString(Score, 0, 551);
+		g.drawString(Health, 100, 511);
 		
 	}
 	
