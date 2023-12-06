@@ -17,7 +17,7 @@ public class Painter extends JPanel {
 	
 	
 	
-	
+	//poop
 
 	@Override
 	protected void paintComponent(Graphics g) {
